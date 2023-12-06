@@ -3,6 +3,11 @@ import { slateEditor } from "@payloadcms/richtext-slate";
 import { buildConfig } from "payload/config";
 import { webpackBundler } from "@payloadcms/bundler-webpack"
 import path from "path";
+import dotenv from 'dotenv'
+
+dotenv.config({
+  path: path.resolve(__dirname, '../env.local'),
+})
 
 export default buildConfig({                                  // Configura el cms payload
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',        // Se define la URL del servidor que utilizará "Payload"
