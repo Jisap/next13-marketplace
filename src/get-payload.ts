@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import path from "path";
-import payload from "payload";
+import payload, { Payload } from "payload";
 import type { InitOptions } from "payload/config";
 
 dotenv.config({
@@ -20,7 +20,7 @@ interface Args {
   initOptions?: Partial<InitOptions> // Interface para las opciones de conexión del cms "payload"
 }
 
-export const getPayloadClient = async ({ initOptions }: Args = {}) => { // Este código está diseñado para inicializar y proporcionar un cliente para el sistema de gestión de contenido (CMS) llamado "Payload
+export const getPayloadClient = async ({ initOptions }: Args = {}):Promise<Payload> => { // Este código está diseñado para inicializar y proporcionar un cliente para el sistema de gestión de contenido (CMS) llamado "Payload
 
   if(!process.env.PAYLOAD_SECRET){                         // Comprobación de la variable de entorno del cms
     throw new Error("PAYLOAD_SECRET is missing")
