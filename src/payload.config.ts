@@ -1,15 +1,12 @@
-import { mongooseAdapter } from "@payloadcms/db-mongodb";
-import { slateEditor } from "@payloadcms/richtext-slate";
+import path from "path";
 import { buildConfig } from "payload/config";
 import { webpackBundler } from "@payloadcms/bundler-webpack"
-import path from "path";
-import dotenv from 'dotenv'
+import { mongooseAdapter } from "@payloadcms/db-mongodb";
+import { slateEditor } from "@payloadcms/richtext-slate";
 
-dotenv.config({
-  path: path.resolve(__dirname, '../env.local'),
-})
 
 export default buildConfig({                                  // Configura el cms payload
+
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',        // Se define la URL del servidor que utilizará "Payload"
   collections: [],                                            // Se definen las colecciones y rutas de la aplicación. 
   routes: {
