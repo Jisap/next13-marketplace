@@ -31,7 +31,7 @@ export const getPayloadClient = async ({ initOptions }: Args = {}) => { // Este 
   }
 
   if (!cached.promise) {                                    // Si no hay una promesa existente, 
-    cached.promise = payload.init({                         // se inicia la inicialización de Payload 
+    cached.promise = payload.init({                         // se inicializa el Payload 
       secret: process.env.PAYLOAD_SECRET,                   // con la clave secreta 
       local: initOptions?.express ? false : true,           // y otras opciones proporcionadas para conexión con el cms.
       ...(initOptions || {})
