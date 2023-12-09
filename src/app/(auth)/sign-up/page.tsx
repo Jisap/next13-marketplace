@@ -52,11 +52,15 @@ const Page = () => {
                   <Input 
                     {...register('email')}
                     className={cn({
-                      'focus-visible: ring-red-500': errors.email,
-
+                      'focus-visible:ring-red-500': errors.email,
                     })}
                     placeholder='you@example.com'
                   />
+                  {errors?.email && (
+                    <p className='text-sm text-red-500'>
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className='grid gap-1 py-2'>
@@ -64,11 +68,15 @@ const Page = () => {
                   <Input
                     {...register('password')}
                     className={cn({
-                      'focus-visible: ring-red-500': errors.password,
-
+                      'focus-visible:ring-red-500': errors.password,
                     })}
                     placeholder='Password'
                   />
+                  {errors?.password && (
+                    <p className='text-sm text-red-500'>
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
 
                 <Button>
