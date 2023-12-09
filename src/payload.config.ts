@@ -1,9 +1,9 @@
+import { webpackBundler } from "@payloadcms/bundler-webpack"
 import { mongooseAdapter } from "@payloadcms/db-mongodb";
 import { slateEditor } from "@payloadcms/richtext-slate";
 import path from "path";
 import dotenv from 'dotenv';
 import { buildConfig } from "payload/config";
-import { webpackBundler } from "@payloadcms/bundler-webpack"
 
 // dotenv.config({
 //   path: path.resolve(__dirname, '../.env'),
@@ -17,6 +17,7 @@ export default buildConfig({                                  // Configura el cm
     admin: '/sell'                                            // la interfaz de administración estará disponible en la ruta /sell.
   },
   admin: {                                                    // Se configura el bundler que se utilizará en la interfaz de administración.
+    //user: "admins",
     bundler: webpackBundler(),                                // En este caso, se utiliza el bundler de Webpack (webpackBundler()).  
     meta: {
       titleSuffix: "- DigitalHippo",
@@ -33,7 +34,8 @@ export default buildConfig({                                  // Configura el cm
   }),
   typescript:{
     outputFile: path.resolve(__dirname, 'payload-types.ts'),  // Se configura "Payload" para generar un archivo de tipos TypeScript (payload-types.ts)
-  }
+  },
+  
 })
 
 // Cuando se ejecuta npm run dev, nodemon se encargará de la ejecución de tu aplicación 
