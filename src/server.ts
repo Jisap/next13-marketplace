@@ -2,10 +2,16 @@
 import express from "express"
 import { getPayloadClient } from "./get-payload";
 import { nextApp, nextHandler } from "./app/next-utils";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import { appRouter } from "./trpc";
 
 const app = express();                                        // Instancia de Express
 
 const PORT = Number(process.env.PORT) || 3000;                // Puerto donde trabaja
+
+const createContext = ({req, res}: trpcExpress.CreateExpressContextOptions) => ({  // Se crea un contexto para que la información de req/res
+  req, res,                                                                        // de express coincida con el formato de trpc 
+})
 
 const start = async () => {                                   // Función start que inicia la aplicación
   const payload = await getPayloadClient({                    // Se obtiene el cliente de gestión de payload usando el método definido en get-payload.ts
@@ -16,6 +22,11 @@ const start = async () => {                                   // Función start 
       },
     },
   })
+
+  app.use('/api/trpc', trpcExpress.createExpressMiddleware({  // El server usará el middleware en la ruta /api/trpc y para ello se configura un
+    router: appRouter,                                        // appRouter que es el router de trpc y sus procedimientos
+    createContext                                             // basados en la gestión de las req/res que da el contexto
+  }))
 
   app.use((req, res) => nextHandler(req, res)); // Se le indica a express que use el manejador de solicitudes http de next.js
 
