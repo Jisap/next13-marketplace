@@ -4,20 +4,21 @@ import { slateEditor } from "@payloadcms/richtext-slate";
 import path from "path";
 import dotenv from 'dotenv';
 import { buildConfig } from "payload/config";
+import { Users } from "./collections/Users";
 
-// dotenv.config({
-//   path: path.resolve(__dirname, '../.env'),
-// })
+ dotenv.config({
+   path: path.resolve(__dirname, '../.env'),
+ })
 
 export default buildConfig({                                  // Configura el cms payload
 
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',        // Se define la URL del servidor que utilizará "Payload"
-  collections: [],                                            // Se definen las colecciones y rutas de la aplicación. 
+  collections: [Users],                                       // Se definen las colecciones y rutas de la aplicación. 
   routes: {
     admin: '/sell'                                            // la interfaz de administración estará disponible en la ruta /sell.
   },
   admin: {                                                    // Se configura el bundler que se utilizará en la interfaz de administración.
-    //user: "admins",
+    user: "users",
     bundler: webpackBundler(),                                // En este caso, se utiliza el bundler de Webpack (webpackBundler()).  
     meta: {
       titleSuffix: "- DigitalHippo",
