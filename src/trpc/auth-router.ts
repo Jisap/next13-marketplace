@@ -6,11 +6,11 @@ import { TRPCError } from "@trpc/server";
 
 export const authRouter = router( {
 
-  createPayloadUser: publicProcedure
-    .input(AuthCredentialsValidator)
-    .mutation(async({input}) => {
-      const { email, password } = input
-      const payload = await getPayloadClient()
+  createPayloadUser: publicProcedure                // Procedimiento para la creación de un usuario en payload
+    .input(AuthCredentialsValidator)                    // Requiere de los datos del usuario validados por zod
+    .mutation(async({input}) => {                       // y de una función que mute su estado en payload
+      const { email, password } = input                     // Esta función necesita esos datos del usuario           
+      const payload = await getPayloadClient()              // y el cliente de gestión del cms 
 
       // check if user already exists
 

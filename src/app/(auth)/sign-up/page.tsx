@@ -22,7 +22,7 @@ const Page = () => {
   // const {data} = trpc.auth.useQuery()
   // console.log(data)
 
-  const { mutate, isLoading } = trpc.auth.createPayloadUser.useMutation({})
+  const { mutate, isLoading } = trpc.auth.createPayloadUser.useMutation({}); // mutate -> trpc -> auth-router -> payload-create
 
   const onSubmit = ({ email, password }: TAuthCredentialsValidator) => {
     mutate({email, password}) // Send data to the server
