@@ -48,8 +48,8 @@ export const getPayloadClient = async ({ initOptions }: Args = {}):Promise<Paylo
       secret: process.env.PAYLOAD_SECRET,                   // con la clave secreta 
       local: initOptions?.express ? false : true,           // y otras opciones proporcionadas para conexión con el cms.
       ...(initOptions || {}),
-      email: {                                              // y gestión de la verificación del user vía email.
-        transport: transporter,                             // El transporter generará un token cuando se cree un user
+      email: {                                              // y configuración de la verificación del user vía email.
+        transport: transporter,                             
         fromAddress: "onboarding@resend.dev",
         fromName: "DigitalHippo"
       }
