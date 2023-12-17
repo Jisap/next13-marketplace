@@ -4,6 +4,7 @@ import { getPayloadClient } from "./get-payload";
 import { nextApp, nextHandler } from "./app/next-utils";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { appRouter } from "./trpc";
+import { inferAsyncReturnType } from "@trpc/server";
 
 const app = express();                                        // Instancia de Express
 
@@ -11,7 +12,9 @@ const PORT = Number(process.env.PORT) || 3000;                // Puerto donde tr
 
 const createContext = ({req, res}: trpcExpress.CreateExpressContextOptions) => ({  // Se crea un contexto para que la información de req/res
   req, res,                                                                        // de express coincida con el formato de trpc 
-})
+});
+
+export type ExpressContext = inferAsyncReturnType<typeof createContext>
 
 const start = async () => {                                   // Función start que inicia la aplicación
   const payload = await getPayloadClient({                    // Se obtiene el cliente de gestión de payload usando el método definido en get-payload.ts

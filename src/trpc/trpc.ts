@@ -1,8 +1,9 @@
+import { ExpressContext } from "@/server";
 import { initTRPC } from "@trpc/server";
 
 // 1º inicializa un servidor trpc
-const t = initTRPC.context().create();        // Inicializa un contexto de trpc y despues crea una instancia de trpc on ese contexto
-                                              // t contiene métodos y propiedades necesarios para trabajar con trpc
+const t = initTRPC.context<ExpressContext>().create();        // Inicializa un contexto de trpc y despues crea una instancia de trpc con ese contexto
+                                                              // t contiene métodos y propiedades necesarios para trabajar con trpc
 
 // 2º router para gestion de rutas
 export const router = t.router                // t.router gestiona y maneja las rutas y procedimientos TRPC
