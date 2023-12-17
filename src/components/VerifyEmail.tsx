@@ -13,7 +13,7 @@ interface VerifyEmailProps {
 
 const VerifyEmail = ({ token }: VerifyEmailProps) => {
   
-  const { data, isLoading, isError } = trpc.auth.verifyEmail.useQuery({
+  const { data, isLoading, isError } = trpc.auth.verifyEmail.useQuery({ // query -> trpc -> AuthRouter -> VerifyEmail -> payload.verifyEmail -> if true email to new user
     token,
   })
 
