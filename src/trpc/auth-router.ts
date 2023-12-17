@@ -74,7 +74,7 @@ export const authRouter = router( {
             email,
             password,
           },
-          res,
+          res, // La respuesta del server es un token con la info del user en el success
         })
 
         return { success: true }
