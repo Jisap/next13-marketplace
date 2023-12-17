@@ -39,8 +39,8 @@ export const authRouter = router( {
       })
 
       return {
-        success: true, sentToEmail: email
-      }
+        success: true, sentToEmail: email       // Si se creo el usuario en bd establecemos la prop sentToEmail con el email
+      }                                         // en signUp se usará en el useMutation tanto para el toast como para el '/verify-email?to='
     }),
 
     verifyEmail: publicProcedure
@@ -49,7 +49,7 @@ export const authRouter = router( {
         const { token } = input
         const payload = await getPayloadClient()
 
-        const isVerified = await payload.verifyEmail({  // El cliente envia al potencial usuario un correo para que lo valide y si lo hace isVerified = true
+        const isVerified = await payload.verifyEmail({  // El cliente comprueba que el usuario de bd coincide con el del token -> isVerified = true
           collection: "users",
           token
         })
