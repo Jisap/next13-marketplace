@@ -49,13 +49,13 @@ export const authRouter = router( {
         const { token } = input
         const payload = await getPayloadClient()
 
-        const isVerified = await payload.verifyEmail({
+        const isVerified = await payload.verifyEmail({  // El cliente envia al potencial usuario un correo para que lo valide y si lo hace isVerified = true
           collection: "users",
           token
         })
 
         if(!isVerified) throw new TRPCError({ code: "UNAUTHORIZED"})
 
-        return { success: true }
+        return { success: true }  // Este true se coloca en el campo verify de la collection "Users"
       })
 })
