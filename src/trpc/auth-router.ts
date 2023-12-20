@@ -74,7 +74,7 @@ export const authRouter = router( {
             email,
             password,
           },
-          res, // La respuesta del server es un token con la info del user en el success
+          res, // La respuesta del server es un token con la info del user en el success -> payload-token en las cookies
         })
 
         return { success: true }
