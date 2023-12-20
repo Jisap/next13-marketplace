@@ -2,7 +2,7 @@ import { User } from "@/payload-types"
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies"
 import { NextRequest } from "next/server"
 
-
+// Este método devuelve un usuario basado en el token generado despues del login
 
 export const getServerSideUser = async (
   cookies: NextRequest["cookies"] | ReadonlyRequestCookies  
