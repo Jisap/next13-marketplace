@@ -7,6 +7,8 @@ import { buildConfig } from "payload/config";
 import { Users } from "./collections/Users";
 import { Products } from "./collections/Products/Products";
 import { Media } from "./collections/Media";
+import { ProductFiles } from "./collections/ProductFile";
+import { Orders } from "./collections/Orders";
 
  dotenv.config({
    path: path.resolve(__dirname, '../.env'),
@@ -15,7 +17,7 @@ import { Media } from "./collections/Media";
 export default buildConfig({                                  // Configura el cms payload
 
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',        // Se define la URL del servidor que utilizará "Payload"
-  collections: [Users, Products, Media],                      // Se definen las colecciones y rutas de la aplicación. 
+  collections: [Users, Products, Media, ProductFiles, Orders],// Se definen las colecciones y rutas de la aplicación. 
   routes: {
     admin: '/sell'                                            // la interfaz de administración estará disponible en la ruta /sell.
   },
