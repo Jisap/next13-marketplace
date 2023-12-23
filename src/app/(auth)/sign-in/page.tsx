@@ -34,7 +34,7 @@ const Page = () => {
     resolver: zodResolver(AuthCredentialsValidator)
   });
 
-  const { mutate: signIn, isLoading } = trpc.auth.signIn.useMutation({                                                                          // usuario clickeara en el enlace -> /verify-email?token=${token} -> user:verified:true
+  const { mutate: signIn, isLoading } = trpc.auth.signIn.useMutation({  // usuario clickeara en el enlace -> /verify-email?token=${token} -> user:verified:true
     onSuccess: async () => {
       toast.success('Signed in successfully')
 

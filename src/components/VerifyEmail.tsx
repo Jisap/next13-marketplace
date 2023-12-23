@@ -11,9 +11,9 @@ interface VerifyEmailProps {
   token: string
 }
 
-const VerifyEmail = ({ token }: VerifyEmailProps) => {
+const VerifyEmail = ({ token }: VerifyEmailProps) => { // Se llega a esta función despues de pinchar el enlace del email que genera un token a traves del cms
   
-  const { data, isLoading, isError } = trpc.auth.verifyEmail.useQuery({ // query -> trpc -> AuthRouter -> VerifyEmail -> payload.verifyEmail -> envia correo -> si se valida
+  const { data, isLoading, isError } = trpc.auth.verifyEmail.useQuery({ // query -> trpc -> AuthRouter -> VerifyEmail -> payload.verifyEmail -> recibe el token -> si se valida
     token,                                                              // verify:true en "user" -> mensaje de success contenido en la data, sino de isErrors
   })
 
