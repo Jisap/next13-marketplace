@@ -2,18 +2,18 @@ import { User } from '../payload-types'
 import { BeforeChangeHook } from 'payload/dist/collections/config/types'
 import { Access, CollectionConfig } from 'payload/types'
 
-const addUser: BeforeChangeHook = ({ req, data }) => {
+const addUser: BeforeChangeHook = ({ req, data }) => {      // Añade el ID del usuario actual (req.user.id) al campo user en los datos que se van a cambiar.
   const user = req.user as User | null
   return { ...data, user: user?.id }
 }
 
-const yourOwnAndPurchased : Access = async ({req}) => {
+const yourOwnAndPurchased: Access = async ({ req }) => {     // Esta función determina qué archivos de productos tiene acceso un usuario. 
   const user = req.user as User | null
 
-  if(user?.role === "admin") return true
-  if(!user) return false
+  if(user?.role === "admin") return true                     // Si el usuario es admin puede ver todos 
+  if(!user) return false                                     // Sino existe un usuario no puede ver nada
 
-  const {docs: products} = await req.payload.find({
+  const {docs: products} = await req.payload.find({          // Productos existentes
     collection: "products",
     depth: 0,
     where: {
@@ -23,11 +23,11 @@ const yourOwnAndPurchased : Access = async ({req}) => {
     },
   });
 
-  const ownProductFileIds = products
+  const ownProductFileIds = products                          // Se obtienen los productos que el usuario a creado y de los que es propietario
     .map((prod) => prod.product_files)
     .flat()
 
-  const { docs: orders } = await req.payload.find({
+  const { docs: orders } = await req.payload.find({           // Ordenes existentes
     collection: 'orders',
     depth: 2,
     where: {
@@ -35,8 +35,28 @@ const yourOwnAndPurchased : Access = async ({req}) => {
         equals: user.id,
       },
     },
-  }) 
+  });
+  
+  const purchasedProductFileIds = orders.map((order) => {     // Se obtienen los productos comprados por el usuario
+    return order.products.map((product) => {
+      
+      if(typeof product === "string") return req.payload.logger.error( // Si el product es una cadena, el pto es solo un id y no se ha recuperado completamente
+        'Search depth not sufficient to find purchased file IDs'       // Mensaje de error.  
+      )
 
+      return typeof product.product_files === 'string'  // Si el product_files es una cadena se asume que es un id
+        ? product.product_files                         // y lo devuele
+        : product.product_files.id                      // sino será un objeto que tiene una prop id y se devuelve.
+    })
+  })
+  .filter(Boolean) // Se eliminan rdos falsys
+  .flat()          // Se obtiene un array único de ids. 
+
+  return {
+    id: {
+      in: [...ownProductFileIds, ...purchasedProductFileIds]
+    }
+  }
 }
 
 export const ProductFiles: CollectionConfig = {
