@@ -23,11 +23,11 @@ const yourOwnAndPurchased: Access = async ({ req }) => {     // Esta función de
     },
   });
 
-  const ownProductFileIds = products                          // Se obtienen los productos que el usuario a creado y de los que es propietario
+  const ownProductFileIds = products                          // De los ptos existentes se obtienen los productos que el usuario a creado y de los que es propietario
     .map((prod) => prod.product_files)
     .flat()
 
-  const { docs: orders } = await req.payload.find({           // Ordenes existentes
+  const { docs: orders } = await req.payload.find({           // Ordenes existentes, ptos que ha comprado
     collection: 'orders',
     depth: 2,
     where: {
@@ -37,7 +37,8 @@ const yourOwnAndPurchased: Access = async ({ req }) => {     // Esta función de
     },
   });
   
-  const purchasedProductFileIds = orders.map((order) => {     // Se obtienen los productos comprados por el usuario
+  const purchasedProductFileIds = orders.map((order) => {     // De las ordenes se obtienen los productos comprados por el usuario
+    
     return order.products.map((product) => {
       
       if(typeof product === "string") return req.payload.logger.error( // Si el product es una cadena, el pto es solo un id y no se ha recuperado completamente
@@ -54,7 +55,7 @@ const yourOwnAndPurchased: Access = async ({ req }) => {     // Esta función de
 
   return {
     id: {
-      in: [...ownProductFileIds, ...purchasedProductFileIds]
+      in: [...ownProductFileIds, ...purchasedProductFileIds] // El usuario tendrá acceso a los ptos cuyas ids sean de sus creaciones y de lo que haya comprado
     }
   }
 }
