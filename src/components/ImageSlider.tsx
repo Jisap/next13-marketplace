@@ -1,5 +1,9 @@
 "use client"
 
+import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css"
+import "swiper/css/pagination"
 
 interface ImageSliderProps {
   urls: string[]
@@ -19,6 +23,20 @@ const ImageSlider = ({urls}: ImageSliderProps) => {
         <button></button>
         <button></button>
       </div>
+
+      <Swiper className="h-full w-full">
+        {urls.map((url, i) => (
+        <SwiperSlide key={i} className="-z-10 relative h-full w-full">
+          <Image 
+            fill
+            loading="eager"
+            className="-z-10 h-full w-full object-cover object-center"
+            src={ url }
+            alt="Product Image"
+            />  
+        </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
   )
 }
