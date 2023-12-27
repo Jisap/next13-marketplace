@@ -21,17 +21,17 @@ const ProductReel = (props: ProductReelProps) => {
 
   const { data: queryResults, isLoading } = trpc.getInfiniteProducts.useInfiniteQuery( // Se utiliza el hook useInfiniteQuery proporcionado por trpc para realizar la consulta a través del procedimiento getInfiniteProducts.
     {
-    limit: query.limit ?? FALLBACK_LIMIT,
-    query
+      limit: query.limit ?? FALLBACK_LIMIT,
+      query
     },
     {
-    getNextPageParam: (lastPage) => lastPage.nextPage
+      getNextPageParam: (lastPage) => lastPage.nextPage
     },
   );
 
-    const products = queryResults?.pages.flatMap((page) => page.items); // Lista plana de productos
+  const products = queryResults?.pages.flatMap((page) => page.items); // Lista plana de productos
 
-    let map: (Product | null)[] = [];   // Se define el listado de productos como Product[]
+  let map: (Product | null)[] = [];     // Se define el listado de productos como Product[]
 
   if (products && products.length) {    // Si hay ptos disponibles map = productos
     map = products

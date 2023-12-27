@@ -48,7 +48,8 @@ const ProductListing = ({ product, index, }: ProductListingProps) => {
             'visible animate-in fade-in-5': isVisible,
           }
         )}
-        href={`/product/${product.id}`}>
+        href={`/product/${product.id}`}
+      >
         <div className='flex flex-col w-full'>
 
           <ImageSlider urls={validUrls} />
