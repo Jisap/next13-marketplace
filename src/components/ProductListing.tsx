@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { cn, formatPrice } from '@/lib/utils'
 import { PRODUCT_CATEGORIES } from '@/config'
 import ImageSlider from './ImageSlider'
+import ImageCarousel from './ImageCarousel'
 //import ImageSlider from './ImageSlider'
 
 interface ProductListingProps {
@@ -53,6 +54,7 @@ const ProductListing = ({ product, index, }: ProductListingProps) => {
         <div className='flex flex-col w-full'>
 
           <ImageSlider urls={validUrls} />
+          {/* <ImageCarousel urls={validUrls} /> */}
 
           <h3 className='mt-4 font-medium text-sm text-gray-700'>
             {product.name}

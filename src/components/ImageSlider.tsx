@@ -2,32 +2,31 @@
 
 import Image from 'next/image'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import 'swiper/css'
-import 'swiper/css/pagination'
 import type SwiperType from 'swiper'
 import { useEffect, useState } from 'react'
 import { Pagination } from 'swiper/modules'
 import { cn } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import 'swiper/css'
+import 'swiper/css/pagination'
 
 interface ImageSliderProps {
   urls: string[]
 }
 
 const ImageSlider = ({ urls }: ImageSliderProps) => {
-  const [swiper, setSwiper] = useState<null | SwiperType>(
-    null
-  )
-  const [activeIndex, setActiveIndex] = useState(0)
 
-  const [slideConfig, setSlideConfig] = useState({
+  const [swiper, setSwiper] = useState<null | SwiperType>(null); // Estado para el objeto swiper
+  const [activeIndex, setActiveIndex] = useState(0);             // Estado para el índice activo 
+
+  const [slideConfig, setSlideConfig] = useState({               // Estado para la configuración del deslizador 
     isBeginning: true,
     isEnd: activeIndex === (urls.length ?? 0) - 1,
   })
 
   useEffect(() => {
-    swiper?.on('slideChange', ({ activeIndex }) => {
-      setActiveIndex(activeIndex)
+    swiper?.on('slideChange', ({ activeIndex }) => {             // Nos suscribimos al evento 'slideChange' de Swiper 
+      setActiveIndex(activeIndex)                                // y actualizamos el estado local tanto del índice activo como el de la configuración de swiper
       setSlideConfig({
         isBeginning: activeIndex === 0,
         isEnd: activeIndex === (urls.length ?? 0) - 1,
@@ -35,8 +34,7 @@ const ImageSlider = ({ urls }: ImageSliderProps) => {
     })
   }, [swiper, urls])
 
-  const activeStyles =
-    'active:scale-[0.97] grid opacity-100 hover:scale-105 absolute top-1/2 -translate-y-1/2 aspect-square h-8 w-8 z-50 place-items-center rounded-full border-2 bg-white border-zinc-300'
+  const activeStyles = 'active:scale-[0.97] grid opacity-100 hover:scale-105 absolute top-1/2 -translate-y-1/2 aspect-square h-8 w-8 z-50 place-items-center rounded-full border-2 bg-white border-zinc-300'
   const inactiveStyles = 'hidden text-gray-400'
 
   return (
@@ -73,7 +71,7 @@ const ImageSlider = ({ urls }: ImageSliderProps) => {
           <ChevronLeft className='h-4 w-4 text-zinc-700' />{' '}
         </button>
       </div>
-
+ 
       <Swiper
         pagination={{
           renderBullet: (_, className) => {
@@ -99,6 +97,7 @@ const ImageSlider = ({ urls }: ImageSliderProps) => {
           </SwiperSlide>
         ))}
       </Swiper>
+      
     </div>
   )
 }
