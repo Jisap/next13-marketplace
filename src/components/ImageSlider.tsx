@@ -40,7 +40,7 @@ const ImageSlider = ({ urls }: ImageSliderProps) => {
   return (
     <div className='group relative bg-zinc-100 aspect-square overflow-hidden rounded-xl'>
       <div className='absolute z-10 inset-0 opacity-0 group-hover:opacity-100 transition'>
-        {/* boton para avanzar en el slide */}
+        
         <button
           onClick={(e) => {
             e.preventDefault()
@@ -58,6 +58,7 @@ const ImageSlider = ({ urls }: ImageSliderProps) => {
           aria-label='next image'>
           <ChevronRight className='h-4 w-4 text-zinc-700' />{' '}
         </button>
+        {/* boton para retroceder en el slide */}
         <button
           onClick={(e) => {
             e.preventDefault()
