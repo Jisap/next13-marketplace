@@ -40,17 +40,18 @@ const ImageSlider = ({ urls }: ImageSliderProps) => {
   return (
     <div className='group relative bg-zinc-100 aspect-square overflow-hidden rounded-xl'>
       <div className='absolute z-10 inset-0 opacity-0 group-hover:opacity-100 transition'>
+        {/* boton para avanzar en el slide */}
         <button
           onClick={(e) => {
             e.preventDefault()
             swiper?.slideNext()
           }}
           className={cn(
-            activeStyles,
-            'right-3 transition',
+            activeStyles,         // Estilos del boton en estado de hover
+            'right-3 transition', // más margen a la derecha con transición.
             {
-              [inactiveStyles]: slideConfig.isEnd,
-              'hover:bg-primary-300 text-primary-800 opacity-100':
+              [inactiveStyles]: slideConfig.isEnd,                  // Se aplican inactiveStyles si slideConfig.isEnd = true
+              'hover:bg-primary-300 text-primary-800 opacity-100':  // Pero sino se aplican estos estilos
                 !slideConfig.isEnd,
             }
           )}
