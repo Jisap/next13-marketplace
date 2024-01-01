@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { formatPrice } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { PRODUCT_CATEGORIES } from "@/config";
+import ImageSlider from "@/components/ImageSlider";
 
 interface PageProps {
   params:{
@@ -63,7 +64,8 @@ const Page = async({ params }:PageProps) => {
   return (
     <MaxWidthWrapper className="bg-white">
       <div className="bg-white">
-        <div className="mx-auto max-w-2xl pc-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
+        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
+          
           {/* Product details */}
           <div className="lg:max-w-lg lg:self-end">
             
@@ -127,6 +129,14 @@ const Page = async({ params }:PageProps) => {
               </div>
             </section>
           </div>
+
+          {/* Product images */}
+          <div className='mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center'>
+            <div className='aspect-square rounded-lg'>
+              <ImageSlider urls={validUrls} />
+            </div>
+          </div>
+
         </div>
       </div>
     </MaxWidthWrapper>
