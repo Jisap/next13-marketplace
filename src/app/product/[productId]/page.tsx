@@ -1,7 +1,9 @@
-"use client"
+
 
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import { getPayloadClient } from "../../../get-payload";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params:{
@@ -22,15 +24,39 @@ const BREADCRUMBS = [
   },
 ]
 
-const Page = ({ params }:PageProps) => {
+const Page = async({ params }:PageProps) => {
+
+  const { productId } = params
+
+  const payload = await getPayloadClient()
+
+  const { docs: products } = await payload.find({
+    collection: "products",
+    limit: 1,
+    where: {
+      id: {
+        equals: productId
+      },
+      approvedForSale: {
+        equals: 'approved',
+      }
+    }
+  })
+
+  const [product] = products
+
+  if(!product) return notFound();
+
   return (
     <MaxWidthWrapper className="bg-white">
       <div className="bg-white">
         <div className="mx-auto max-w-2xl pc-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
           {/* Product details */}
           <div className="lg:max-w-lg lg:self-end">
+            
             <ol className="flex items-center space-x-2">
               {BREADCRUMBS.map((breadcrumb, i) => (
+                
                 <li key={breadcrumb.href}>
                   <div className="flex items-center text-sm">
                     <Link 
@@ -49,11 +75,16 @@ const Page = ({ params }:PageProps) => {
                       </svg>
                     ): null}
                   </div>
-                </li>  
+                </li> 
+
               ))}
             </ol>
 
-            <div></div>
+            <div className="mt-4">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                {product.name}
+              </h1>
+            </div>
           </div>
         </div>
       </div>

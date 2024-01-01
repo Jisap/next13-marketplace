@@ -8,6 +8,7 @@ const addUser: BeforeChangeHook = ({ req, data }) => {      // Añade el ID del 
 }
 
 const yourOwnAndPurchased: Access = async ({ req }) => {     // Esta función determina qué archivos de productos tiene acceso un usuario. 
+  
   const user = req.user as User | null
 
   if(user?.role === "admin") return true                     // Si el usuario es admin puede ver todos 
@@ -27,7 +28,7 @@ const yourOwnAndPurchased: Access = async ({ req }) => {     // Esta función de
     .map((prod) => prod.product_files)
     .flat()
 
-  const { docs: orders } = await req.payload.find({           // Ordenes existentes, ptos que ha comprado
+  const { docs: orders } = await req.payload.find({           // Ordenes existentes, ptos que se han comprado
     collection: 'orders',
     depth: 2,
     where: {
