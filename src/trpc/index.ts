@@ -16,7 +16,7 @@ export const appRouter = router({               // Crea un nuevo router basado e
       z.object({                                // validado con reglas de zod
         limit: z.number().min(1).max(100),          // cantidad de elementos que se deben devolver en la consulta.
         cursor: z.number().nullish(),               // Si se proporciona la consulta devuelve resultados a partir de ese punto
-        query: QueryValidator                       // opciones de consulta adicionales para filtrar los resultados de la consulta principal.
+        query: QueryValidator                       // opciones de consulta adicionales (cat, sort, limit ) para filtrar los resultados de la consulta principal (query).
       })
     )
     .query(async({ input }) => {                      // y 2º una petición a la bd con dicho input
