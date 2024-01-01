@@ -39,7 +39,7 @@ const Cart = () => {
           aria-hidden="true"  
         />
         <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-          {itemCount}
+          {isMounted ? itemCount : 0}
         </span>
       </SheetTrigger>
 
