@@ -7,12 +7,28 @@ import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import { buttonVariants } from "./ui/button";
 import Image from "next/image";
+import { useCart } from "@/hooks/use-cart";
+import { useEffect, useState } from "react";
+import { ScrollArea } from "./ui/scroll-area";
+import CartItem from "./cartItem";
 
 
 const Cart = () => {
-
-  const itemCount = 0;
+ 
+  const { items } = useCart()
+  const itemCount = items.length
   const fee = 1;
+
+  const [isMounted, setIsMounted] = useState<boolean>(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, []);
+
+  const cartTotal = items.reduce(
+    (total, { product }) => total + product.price,
+    0
+  )
 
   return (
     <Sheet>
@@ -36,8 +52,14 @@ const Cart = () => {
         {itemCount > 0 ? (
           <>
             <div className="flex w-full flex-col pr-6">
-              {/* TODO: cart logic */}
-              cart items
+              <ScrollArea>
+                {items.map(({ product }) => (
+                  <CartItem 
+                    key={product.id}
+                    product={product}
+                  />
+                ))}    
+              </ScrollArea>
             </div>
 
             <div className="space-y-4 pr-6">
@@ -53,7 +75,7 @@ const Cart = () => {
                 </div>
                 <div className="flex">
                   <span className="flex-1">Total</span>
-                  <span>{formatPrice(fee)}</span>
+                  <span>{formatPrice(cartTotal + fee)}</span>
                 </div>
               </div>
 
@@ -94,7 +116,7 @@ const Cart = () => {
                   className: "text-sm text-muted-foreground"
                 })}  
               >
-                Add items yo your cart to checkout
+                Add items to your cart to checkout
               </Link>
             </SheetTrigger>
           </div>
