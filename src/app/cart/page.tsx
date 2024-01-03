@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import { Product } from '../../payload-types';
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Check, X } from "lucide-react"
+import { Check, Loader2, X } from "lucide-react"
 
 const Page = () => {
 
@@ -18,7 +18,14 @@ const Page = () => {
 
   useEffect(() => {
     setIsMounted(true)
-  })
+  });
+
+  const cartTotal = items.reduce(
+    (total, { product }) => total + product.price,
+    0
+  )
+
+    const fee = 1
 
   return (
     <div className="bg-white">
@@ -78,6 +85,7 @@ const Page = () => {
                       {/* Details */}
                       <div className='ml-4 flex flex-1 flex-col justify-between sm:ml-6'>
                         <div className='relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0'>
+                          {/* col1 */}
                           <div>
                             <div className="flex justify-between">
                               <h3 className='text-sm'>
@@ -100,6 +108,7 @@ const Page = () => {
                             </p>
                           </div>
 
+                          {/* col2 */}
                           <div className='mt-4 sm:mt-0 sm:pr-9 w-20'>
                             <div className='absolute right-0 top-0'>
                               <Button
@@ -129,6 +138,54 @@ const Page = () => {
               })}
             </ul>
           </div>
+
+          <section className='mt-16 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8'>
+            <h2 className='text-lg font-medium text-gray-900'>
+              Order summary
+            </h2>
+
+            <div className='mt-6 space-y-4'>
+              <div className='flex items-center justify-between'>
+                <p className='text-sm text-gray-600'>
+                  Subtotal
+                </p>
+                <p className='text-sm font-medium text-gray-900'>
+                  {isMounted ? (
+                    formatPrice(cartTotal)
+                  ) : (
+                    <Loader2 className='h-4 w-4 animate-spin text-muted-foreground' />
+                  )}
+                </p>
+              </div>
+
+              <div className='flex items-center justify-between border-t border-gray-200 pt-4'>
+                <div className='text-base font-medium text-gray-900'>
+                  Order Total
+                </div>
+                <div className='text-base font-medium text-gray-900'>
+                  {isMounted ? (
+                    formatPrice(cartTotal + fee)
+                  ) : (
+                    <Loader2 className='h-4 w-4 animate-spin text-muted-foreground' />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className='mt-6'>
+              <Button
+                onClick={() => {}}
+                className='w-full'
+                size='lg'
+              >  
+                Checkout
+              </Button>
+            </div>
+
+          </section>
+
+
+
         </div>
       </div>
     </div>
