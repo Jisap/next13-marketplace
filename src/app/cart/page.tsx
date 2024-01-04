@@ -22,7 +22,9 @@ const Page = () => {
     onSuccess: ({ url }) => {
       if (url) router.push(url)
     },
-  })
+  });
+
+  const productIds = items.map(({ product }) => product.id);
 
   const [isMounted, setIsMounted] = useState<boolean>(false)
 
@@ -197,7 +199,7 @@ const Page = () => {
 
             <div className='mt-6'>
               <Button
-                onClick={() => {}}
+                onClick={() => createCheckoutSession({ productIds })}
                 className='w-full'
                 size='lg'
               >  
