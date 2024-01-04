@@ -9,10 +9,20 @@ import { Product } from '../../payload-types';
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Check, Loader2, X } from "lucide-react"
+import { trpc } from "@/trpc/client"
+import { useRouter } from "next/navigation"
 
 const Page = () => {
 
+  const router = useRouter();
+
   const { items, removeItem } = useCart();
+
+  const { mutate: createCheckoutSession, isLoading } = trpc.payment.createSession.useMutation({
+    onSuccess: ({ url }) => {
+      if (url) router.push(url)
+    },
+  })
 
   const [isMounted, setIsMounted] = useState<boolean>(false)
 
