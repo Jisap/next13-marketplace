@@ -5,11 +5,13 @@ import { publicProcedure, router } from "./trpc";
 
 import { QueryValidator } from "../lib/validators/query-validator";
 import { getPayloadClient } from "../get-payload";
+import { paymentRouter } from './payment-router';
 
 
 export const appRouter = router({               // Crea un nuevo router basado en el de trpc
 
   auth: authRouter,                             // Subrouter de autenticación
+  paymentRouter,                                // Subrouter de pagos
 
   getInfiniteProducts: publicProcedure          // Procedimiento público 
     .input(                                     // que 1º tendrá un input  

@@ -1,7 +1,14 @@
+
 import { PRODUCT_CATEGORIES } from "../../config";
 import { CollectionConfig } from "payload/types";
+import { Product } from "@/payload-types";
+import { BeforeChangeHook } from "payload/dist/collections/config/types";
+import { stripe } from "../../lib/stripe";
 
-
+const addUser: BeforeChangeHook<Product> = async ({ req, data }) => {
+  const user = req.user
+  return { ...data, user: user.id }
+}
 
 export const Products: CollectionConfig = {
 
@@ -11,6 +18,46 @@ export const Products: CollectionConfig = {
   },
   access:{
     
+  },
+  hooks: {
+    beforeChange: [ // Antes de crear el producto
+      addUser,      // añadimos el usuario que lo compró
+      async (args) => { // y realizamos unas operaciones
+
+        if(args.operation === "create"){ // Si args=create
+          const data = args.data as Product
+          const createdProduct = await stripe.products.create({ // Creamos el product en la pasarela de pagos stripe
+            name: data.name,                                    // con su nombre
+            default_price_data: {                               // su precio y la moneda de pago  
+              currency: 'EUR',
+              unit_amount: Math.round(data.price * 100),
+            }
+          })
+          const updated: Product = {                            // Actualizamos en bd el pto añadiendo la info del pto, impuestos y precio  
+            ...data,
+            stripeId: createdProduct.id, // impuestos
+            priceId: createdProduct.default_price as string // precio en euros
+          }
+          return updated;
+
+        }else if(args.operation === "update"){  // Si args= updated
+          const data = args.data as Product
+
+          const updatedProduct = await stripe.products.update(data.stripeId!, { // Actualizamos el product en la pasarela de pagos stripe
+              name: data.name,
+              default_price: data.priceId!,
+          })
+
+          const updated: Product = {                                            // Actualizamos en bd el pto 
+            ...data,
+            stripeId: updatedProduct.id,
+            priceId: updatedProduct.default_price as string,
+          }
+
+          return updated
+        }
+      }
+    ]
   },
   fields: [
     {
