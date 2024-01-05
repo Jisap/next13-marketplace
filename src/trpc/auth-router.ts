@@ -40,7 +40,7 @@ export const authRouter = router( {
 
       return {
         success: true,                          // Si se creo el usuario devolvemos true    
-        sentToEmail: email                      // y en bd establecemos la prop sentToEmail con el email
+        sentToEmail: email                      // y ademas la prop sentToEmail con el email
       }                                         // en signUp se usará en el useMutation tanto para el toast como para el '/verify-email?to='
     }),
 
@@ -65,7 +65,7 @@ export const authRouter = router( {
     .mutation(async ({ input, ctx }) => {
       const { email, password } = input
       const { res } = ctx
-
+      
       const payload = await getPayloadClient()
 
       try {
@@ -75,8 +75,8 @@ export const authRouter = router( {
             email,
             password,
           },
-          res, // La respuesta del server es un token con la info del user en el success -> payload-token en las cookies
-        })
+          res, // La respuesta del server es un user y un token para autenticación. 
+        });    // Ademas establece automaticamente una cookie http que incluye dicho token con el label "payload-token". 
 
         return { success: true }
       } catch (err) {
