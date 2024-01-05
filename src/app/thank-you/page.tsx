@@ -45,9 +45,9 @@ const ThankYouPage = async ({ searchParams }: PageProps) => {
     return redirect(`/sign-in?origin=thank-you?orderId=${order.id}`); // Si no coinciden, se redirige a la página de inicio de sesión con el parámetro origin en la URL.
   }
 
-  const products = order.products as Product[];   
+  const products = order.products as Product[];   // obtenemos los ptos de la compra
 
-  const orderTotal = products.reduce((total, product) => {
+  const orderTotal = products.reduce((total, product) => {  // y el total de la compra
     return total + product.price
   }, 0)
 
