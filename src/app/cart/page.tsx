@@ -207,6 +207,7 @@ const Page = () => {
                 {isLoading ? (
                   <Loader2 className='w-4 h-4 animate-spin mr-1.5' />
                 ) : null}
+                Checkout
               </Button>
             </div>
 
