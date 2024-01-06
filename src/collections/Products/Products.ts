@@ -20,11 +20,11 @@ export const Products: CollectionConfig = {
     
   },
   hooks: {
-    beforeChange: [ // Antes de crear el producto
-      addUser,      // añadimos el usuario que lo compró
-      async (args) => { // y realizamos unas operaciones
+    beforeChange: [                                             // Antes de realizar un cambio en la colección
+      addUser,                                                  // añadimos el usuario que lo compró al objeto de datos
+      async (args) => {                                         // y realizamos unas operaciones sobre dicho objeto dependiendo de si es una creación a actualización.
 
-        if(args.operation === "create"){ // Si args=create
+        if(args.operation === "create"){                        // Si creamos un nuevo producto
           const data = args.data as Product
           const createdProduct = await stripe.products.create({ // Creamos el product en la pasarela de pagos stripe
             name: data.name,                                    // con su nombre
@@ -33,14 +33,14 @@ export const Products: CollectionConfig = {
               unit_amount: Math.round(data.price * 100),
             }
           })
-          const updated: Product = {                            // Actualizamos en bd el pto añadiendo la info del pto, impuestos y precio  
+          const updated: Product = {                            // Actualizamos el objeto de datos con los datos de la pasarela de pagos
             ...data,
             stripeId: createdProduct.id, // impuestos
             priceId: createdProduct.default_price as string // precio en euros
           }
           return updated;
 
-        }else if(args.operation === "update"){  // Si args= updated
+        }else if(args.operation === "update"){                  // Si actualizamos un producto
           const data = args.data as Product
 
           const updatedProduct = await stripe.products.update(data.stripeId!, { // Actualizamos el product en la pasarela de pagos stripe
@@ -48,7 +48,7 @@ export const Products: CollectionConfig = {
               default_price: data.priceId!,
           })
 
-          const updated: Product = {                                            // Actualizamos en bd el pto 
+          const updated: Product = {                                            // Actualizamos en objeto de datos que luego se utilizará en la bd
             ...data,
             stripeId: updatedProduct.id,
             priceId: updatedProduct.default_price as string,
