@@ -22,8 +22,8 @@ const ThankYouPage = async ({ searchParams }: PageProps) => {
   const { user } = await getServerSideUser(nextCookies);        // User que ha realizado la compra
   const payload = await getPayloadClient();
 
-  const { docs: orders } = await payload.find({                 // Obtención de datos del pedido desde el CMS Payload:  
-    collection: "orders",
+  const { docs: orders } = await payload.find({                 // Obtención del pedido (Order[]) con el id de la compra actual desde el CMS Payload  
+    collection: "orders",                                       // La respuesta del cms es un array de un solo objeto.
     depth: 2,
     where: {
       id: {
@@ -32,11 +32,11 @@ const ThankYouPage = async ({ searchParams }: PageProps) => {
     }
   })
 
-  const [order] = orders              // Reasignamos el primer valor del array orders a order
+  const [order] = orders              // Reasignamos el primer valor del array orders a order para tener un solo objeto con el que trabajar.
 
   if(!order) return notFound();       // Sino hay orden compra mensaje de error
 
-  const orderUserId =                 
+  const orderUserId =                 // Determinamos si el id del comprador es un id:string o un objeto que lo contiene.  
     typeof order.user === "string"    // Verifica si el tipo de order.user es una cadena
       ? order.user                    // Si es una cadena, asigna order.user a orderUserId
       : order.user.id                 // Si no es una cadena (objeto), asigna order.user.id a orderUserId
