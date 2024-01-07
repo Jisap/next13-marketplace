@@ -44,7 +44,7 @@ export const authRouter = router( {
       }                                         // en signUp se usará en el useMutation tanto para el toast como para el '/verify-email?to='
     }),
 
-    verifyEmail: publicProcedure
+    verifyEmail: publicProcedure                        // Despues de pinchar en enlace del correo se redirige a /verify-email -> <VerifyEmail /> -> AuthRouter
       .input(z.object({token: z.string()}))
       .query( async ({ input }) => {
         const { token } = input

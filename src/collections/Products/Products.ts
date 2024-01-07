@@ -21,7 +21,7 @@ export const Products: CollectionConfig = {
   },
   hooks: {
     beforeChange: [                                             // Antes de realizar un cambio en la colección
-      addUser,                                                  // añadimos el usuario que lo compró al objeto de datos
+      addUser,                                                  // añadimos el usuario que creo/actulizó un pto al objeto de datos
       async (args) => {                                         // y realizamos unas operaciones sobre dicho objeto dependiendo de si es una creación a actualización.
 
         if(args.operation === "create"){                        // Si creamos un nuevo producto
