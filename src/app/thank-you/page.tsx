@@ -1,10 +1,12 @@
+import PaymentStatus from "@/components/PaymentStatus"
 import { PRODUCT_CATEGORIES } from "@/config"
 import { getPayloadClient } from "@/get-payload"
 import { getServerSideUser } from "@/lib/payload-utils"
 import { formatPrice } from "@/lib/utils"
-import { Product, ProductFile } from "@/payload-types"
+import { Product, ProductFile, User } from "@/payload-types"
 import { cookies } from "next/headers"
 import Image from "next/image"
+import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 interface PageProps {
@@ -16,8 +18,8 @@ interface PageProps {
 
 const ThankYouPage = async ({ searchParams }: PageProps) => {
 
-  const orderId = searchParams.orderId                          // id de la orden 
-  const nextCookies = cookies();                                // Cookie que contiene el usuario logueado y el token de autenticación
+  const orderId = searchParams.orderId                          // id de la orden generado en payment-router
+  const nextCookies = cookies();                                // Cookie que contiene el usuario logueado y el token de autenticación generado en authRouter
 
   const { user } = await getServerSideUser(nextCookies);        // User que ha realizado la compra
   const payload = await getPayloadClient();
@@ -34,7 +36,7 @@ const ThankYouPage = async ({ searchParams }: PageProps) => {
 
   const [order] = orders              // Reasignamos el primer valor del array orders a order para tener un solo objeto con el que trabajar.
 
-  if(!order) return notFound();       // Sino hay orden compra mensaje de error
+  if(!order) return notFound();       // Sino hay orden de compra mensaje de error
 
   const orderUserId =                 // Determinamos si el id del comprador es un id:string o un objeto que lo contiene.  
     typeof order.user === "string"    // Verifica si el tipo de order.user es una cadena
@@ -178,6 +180,20 @@ const ThankYouPage = async ({ searchParams }: PageProps) => {
                     {formatPrice(orderTotal + 1)}
                   </p>
                 </div>
+              </div>
+
+              <PaymentStatus
+                isPaid={order._isPaid}
+                orderEmail={(order.user as User).email}
+                orderId={order.id}
+              />
+
+              <div className='mt-16 border-t border-gray-200 py-6 text-right'>
+                <Link
+                  href='/products'
+                  className='text-sm font-medium text-blue-600 hover:text-blue-500'>
+                  Continue shopping &rarr;
+                </Link>
               </div>
 
             </div>
