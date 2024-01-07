@@ -5,6 +5,9 @@ import { nextApp, nextHandler } from "./app/next-utils";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { appRouter } from "./trpc";
 import { inferAsyncReturnType } from "@trpc/server";
+import bodyParser from "body-parser";
+import { IncomingMessage } from "http";
+import { stripeWebhookHandler } from "./webhooks";
 
 const app = express();                                        // Instancia de Express
 
@@ -16,7 +19,19 @@ const createContext = ({req, res}: trpcExpress.CreateExpressContextOptions) => (
 
 export type ExpressContext = inferAsyncReturnType<typeof createContext>
 
-const start = async () => {                                   // Función start que inicia la aplicación
+export type WebhookRequest = IncomingMessage & {rawBody: Buffer}      // Solicitud weebhook
+
+const start = async () => {                                           // Función start que inicia la aplicación
+  
+  const webhookMiddleware = bodyParser.json({                         // middleware para obtener firma del encabezado de la solicitud webhook
+    verify: (req: WebhookRequest, _, buffer) => {                     // Para acceder a ella se necesita acceder al cuerpo sin procesar de la solicitud "buffer" 
+      req.rawBody = buffer                                            // Dicho buffer se asigna al objeto req.rawBody
+    }
+  })
+
+  app.post("/api/webhooks/stripe", webhookMiddleware, stripeWebhookHandler); // La firma de la solicitud webhook se pasa al manejador stripeWbhooHandler
+  
+  
   const payload = await getPayloadClient({                    // Se obtiene el cliente de gestión de payload usando el método definido en get-payload.ts
     initOptions: {
       express: app,
