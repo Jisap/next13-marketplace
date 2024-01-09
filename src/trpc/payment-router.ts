@@ -82,7 +82,7 @@ export const paymentRouter = router({
         return { url: null }
       }
     }),
-  pollOrderStatus: privateProcedure                   // Este procedimiento procede a establecer la prop _isPaid como true en order tras llegar a la /thank-you page
+  pollOrderStatus: privateProcedure                   // Este procedimiento 
     .input(z.object({ orderId: z.string() }))
     .query(async ({ input }) => {
       const { orderId } = input

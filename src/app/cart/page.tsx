@@ -30,7 +30,7 @@ const Page = () => {
 
   useEffect(() => {
     setIsMounted(true)
-  });
+  },[]);
 
   const cartTotal = items.reduce(
     (total, { product }) => total + product.price,

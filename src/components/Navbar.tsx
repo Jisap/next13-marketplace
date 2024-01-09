@@ -35,7 +35,7 @@ const Navbar = async () => {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  { user ? null : (
+                  { user ? null : ( // Si existe el usuario no se muestra sign-in, en caso contrario si
                     <Link 
                       href="/sign-in"
                       className={buttonVariants({variant: "ghost"})}
@@ -44,14 +44,14 @@ const Navbar = async () => {
                     </Link>
                   )}
 
-                  {user ? null : (
+                  {user ? null : (  // separador horizontal
                     <span 
                       className="h-6 w-px bg-gray-200"
                       aria-hidden="true"
                     />  
                   )}
 
-                  {user ? 
+                  {user ?   // Si existe el usuario se muestra su icono, en caso contrario se muestra sign-up
                     <UserAccountNav user={user} /> : (
                   <Link
                     href="/sign-up"
@@ -61,14 +61,14 @@ const Navbar = async () => {
                   </Link>
                   )}
 
-                  {user ? (
+                  {user ? ( // Separador
                     <span 
                       className="h-6 w-px bg-gray-200"
                       aria-hidden="true"
                     />) : null
                   }
 
-                  {user ? null : (
+                  {user ? null : (  // separador
                     <div className="flex lg:ml-6">
                       <span 
                         className="h-6 w-px bg-gray-200"

@@ -8,10 +8,12 @@ import { inferAsyncReturnType } from "@trpc/server";
 import bodyParser from "body-parser";
 import { IncomingMessage } from "http";
 import { stripeWebhookHandler } from "./webhooks";
+import nextBuild from 'next/dist/build';
+import path from 'path'
 
-const app = express();                                        // Instancia de Express
+const app = express();                                                // Instancia de Express
 
-const PORT = Number(process.env.PORT) || 3000;                // Puerto donde trabaja
+const PORT = Number(process.env.PORT) || 3000;                        // Puerto donde trabaja
 
 const createContext = ({req, res}: trpcExpress.CreateExpressContextOptions) => ({  // Se crea un contexto para que la información de req/res
   req, res,                                                                        // de express coincida con el formato de trpc 
@@ -19,18 +21,17 @@ const createContext = ({req, res}: trpcExpress.CreateExpressContextOptions) => (
 
 export type ExpressContext = inferAsyncReturnType<typeof createContext>
 
-export type WebhookRequest = IncomingMessage & {rawBody: Buffer}      // Solicitud weebhook
+export type WebhookRequest = IncomingMessage & {rawBody: Buffer}      // Tipo para solicitud weebhook
 
 const start = async () => {                                           // Función start que inicia la aplicación
   
-  const webhookMiddleware = bodyParser.json({                         // middleware para obtener firma del encabezado de la solicitud webhook
-    verify: (req: WebhookRequest, _, buffer) => {                     // Para acceder a ella se necesita acceder al cuerpo sin procesar de la solicitud "buffer" 
-      req.rawBody = buffer                                            // Dicho buffer se asigna al objeto req.rawBody
+  const webhookMiddleware = bodyParser.json({                         // Este middleware analiza el cuerpo json de las solicitudes entrantes (/api/webhooks/stripe) 
+    verify: (req: WebhookRequest, _, buffer) => {                     // verify se ejecuta antes de analizar el cuerpo de la solicitud json
+      req.rawBody = buffer                                            // y asigna el cuerpo sin procesar (buffer) a la propiedad rawBody de la solicitud req
     }
   })
 
-  app.post("/api/webhooks/stripe", webhookMiddleware, stripeWebhookHandler); // La firma de la solicitud webhook se pasa al manejador stripeWbhooHandler
-  
+  app.post("/api/webhooks/stripe", webhookMiddleware, stripeWebhookHandler); // Petición a stripe pasando al stripeWebhookHandler el cuerpo sin procesar de la solictud
   
   const payload = await getPayloadClient({                    // Se obtiene el cliente de gestión de payload usando el método definido en get-payload.ts
     initOptions: {
@@ -41,6 +42,23 @@ const start = async () => {                                           // Funció
     },
   })
 
+
+  if (process.env.NEXT_BUILD) {
+    app.listen(PORT, async () => {
+      payload.logger.info(
+        'Next.js is building for production'
+      )
+
+      // @ts-expect-error
+      await nextBuild(path.join(__dirname, '../'))
+
+      process.exit()
+    })
+
+    return
+  }
+  
+  
   app.use('/api/trpc', trpcExpress.createExpressMiddleware({  // El server usará el middleware en la ruta /api/trpc y para ello se configura un
     router: appRouter,                                        // appRouter que es el router de trpc y sus procedimientos
     createContext                                             // basados en la gestión de las req/res que da el contexto
