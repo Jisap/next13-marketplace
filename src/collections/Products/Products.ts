@@ -2,13 +2,48 @@
 import { PRODUCT_CATEGORIES } from "../../config";
 import { CollectionConfig } from "payload/types";
 import { Product } from "@/payload-types";
-import { BeforeChangeHook } from "payload/dist/collections/config/types";
+import { AfterChangeHook, BeforeChangeHook } from "payload/dist/collections/config/types";
 import { stripe } from "../../lib/stripe";
 
 const addUser: BeforeChangeHook<Product> = async ({ req, data }) => {
   const user = req.user
   return { ...data, user: user.id }
 }
+
+const syncUser: AfterChangeHook<Product> = async ({  // Despues de crear el pto
+  req,  // Solicitud de cambio/creación
+  doc,  // producto que a cambiado/creado
+}) => {
+  const fullUser = await req.payload.findByID({     // Usuario que quiere crear un pto
+    collection: 'users',
+    id: req.user.id,
+  })
+
+  if (fullUser && typeof fullUser === 'object') {   // Verifica que fullUser existe y si es un objeto
+    const { products } = fullUser                   // Si es así extrae la propiedad products del usuario      
+
+    const allIDs = [                                          // Crea un array de ids únicos de productos
+      ...(products?.map((product) =>                          
+        typeof product === 'object' ? product.id : product
+      ) || []),
+    ]
+
+    const createdProductIDs = allIDs.filter(                  // Filtrado de IDs duplicados y creación de un array de productos a actualizar:
+      (id, index) => allIDs.indexOf(id) === index             // La función de filtro devuelve true para los elementos que cumplen la condición de que  
+    )                                                         // la primera aparición del id sea igual al índice actual.  
+
+    const dataToUpdate = [...createdProductIDs, doc.id]       // Luego, agrega el ID del producto (doc.id) al array resultante (dataToUpdate).
+
+    await req.payload.update({                                // Actualización de la información del usuario
+      collection: 'users',
+      id: fullUser.id,
+      data: {
+        products: dataToUpdate,
+      },
+    })
+  }
+}
+
 
 export const Products: CollectionConfig = {
 
