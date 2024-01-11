@@ -45,30 +45,30 @@ const start = async () => {                                           // Funció
     },
   })
 
-  const cartRouter = express.Router();
+  const cartRouter = express.Router();                            // Creación de un enrutador para el carrito
 
-  cartRouter.use(payload.authenticate);
+  cartRouter.use(payload.authenticate);                           // middleware de autenticación del usuario logueado
 
-  cartRouter.get("/", (req,res) => {
+  cartRouter.get("/", (req, res) => {                             // Las solicitudes a la raiz de la ruta "/cart"
     const request = req as PayloadRequest
-    if(!request.user) return res.redirect('sign-in?origin=cart')
-    const parsedUrl = parse(req.url, true)
+    if (!request.user) return res.redirect('sign-in?origin=cart') // Si el usuario no está autenticado, redirecciona a la página de inicio de sesión con un parámetro de origen (origin=cart).
+    const parsedUrl = parse(req.url, true)                        // Analiza la URL y extraer los parámetros de la consulta 
 
-    return nextApp.render(req, res, "/cart", parsedUrl.query)
+    return nextApp.render(req, res, "/cart", parsedUrl.query)     // Renderizar la página del carrito usando Next.js 
   });
 
-  app.use("/cart", cartRouter);
+  app.use("/cart", cartRouter); // Montaje del enrutador del carrito en la aplicación principal(app) -> todas las rutas definidas en cartRouter estarán precedidas por "/cart".
 
-  if (process.env.NEXT_BUILD) {
-    app.listen(PORT, async () => {
+
+
+  if (process.env.NEXT_BUILD) {                                   // Condicional para la construcción de Next.js en producción:  
+    app.listen(PORT, async () => {                                // Escuchar en el puerto especificado
       payload.logger.info(
         'Next.js is building for production'
       )
-
       // @ts-expect-error
-      await nextBuild(path.join(__dirname, '../'))
-
-      process.exit()
+      await nextBuild(path.join(__dirname, '../'))                // Ejecutar la construcción de Next.js
+      process.exit()                                              // Salir del proceso después de la construcción
     })
 
     return
