@@ -46,6 +46,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Products = void 0;
 var config_1 = require("../../config");
@@ -60,15 +69,86 @@ var addUser = function (_a) {
         });
     });
 };
+var syncUser = function (_a) {
+    var // Despues de crear el pto o modificar la colección sincronizamos el usuario con la bd
+    req = _a.req, // Solicitud de cambio/creación
+    doc = _a.doc;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var fullUser, products, allIDs_1, createdProductIDs, dataToUpdate;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, req.payload.findByID({
+                        collection: 'users',
+                        id: req.user.id,
+                    })];
+                case 1:
+                    fullUser = _b.sent();
+                    if (!(fullUser && typeof fullUser === 'object')) return [3 /*break*/, 3];
+                    products = fullUser // Si es así extrae la propiedad products del usuario      
+                    .products;
+                    allIDs_1 = __spreadArray([], ((products === null || products === void 0 ? void 0 : products.map(function (product) {
+                        return typeof product === 'object' ? product.id : product;
+                    })) || []), true);
+                    createdProductIDs = allIDs_1.filter(// Filtrado de IDs duplicados y creación de un array de productos a actualizar:
+                    function (id, index) { return allIDs_1.indexOf(id) === index; } // La función de filtro devuelve true para los elementos que cumplen la condición de que  
+                    ) // la primera aparición del id sea igual al índice actual.  
+                    ;
+                    dataToUpdate = __spreadArray(__spreadArray([], createdProductIDs, true), [doc.id], false);
+                    return [4 /*yield*/, req.payload.update({
+                            collection: 'users',
+                            id: fullUser.id,
+                            data: {
+                                products: dataToUpdate,
+                            },
+                        })];
+                case 2:
+                    _b.sent();
+                    _b.label = 3;
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+};
+var isAdminOrHasAccess = // Generador de reglas de acceso que se utiliza para verificar si un usuario tiene acceso a recursos específicos.
+ function () {
+    return function (_a) {
+        var _user = _a.req.user;
+        var user = _user; // Nos aseguramos que _user sea de tipo User
+        if (!user)
+            return false; // false si no existe el user (no se da acceso)
+        if (user.role === 'admin')
+            return true; // true si el user es admin   (si se da acceso)
+        var userProductIDs = (user.products || []).reduce(function (acc, product) {
+            if (!product)
+                return acc; // Si el product es undefined o null se retorna el acumulador sin cambios
+            if (typeof product === 'string') { // Si product es una cadena se agrega directamente al array acumulador
+                acc.push(product);
+            }
+            else {
+                acc.push(product.id); // Si product es un objeto se agreaga el product.id   
+            }
+            return acc;
+        }, []); // [] valor inicial del acumulador
+        return {
+            id: {
+                in: userProductIDs, // El array final contiene solo los IDs de los productos cuyo acceso estará en función del role del usuario
+            }, // o de si perternecen al usuario que los creo o compro
+        };
+    };
+};
 exports.Products = {
     slug: "products",
     admin: {
         useAsTitle: "name"
     },
-    access: {},
+    access: {
+        read: isAdminOrHasAccess(),
+        update: isAdminOrHasAccess(),
+        delete: isAdminOrHasAccess(),
+    },
     hooks: {
         beforeChange: [
-            addUser, // añadimos el usuario que creo/actulizó un pto al objeto de datos
+            addUser, // añadimos el usuario que creo/actualizó un pto al objeto de datos
             function (args) { return __awaiter(void 0, void 0, void 0, function () {
                 var data, createdProduct, updated, data, updatedProduct, updated;
                 return __generator(this, function (_a) {
@@ -103,7 +183,8 @@ exports.Products = {
                     }
                 });
             }); }
-        ]
+        ],
+        afterChange: [syncUser], // Despues de realizar un cambio en la colección sincronizamos la colección con la bd
     },
     fields: [
         {

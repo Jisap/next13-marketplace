@@ -10,12 +10,11 @@ import { IncomingMessage } from "http";
 import { stripeWebhookHandler } from "./webhooks";
 import nextBuild from 'next/dist/build';
 import path from 'path'
-import { Payload } from "payload";
 import { PayloadRequest } from "payload/types";
 import { parse } from "url";
 
-const app = express();                                                // Instancia de Express
 
+const app = express();                                                // Instancia de Express
 const PORT = Number(process.env.PORT) || 3000;                        // Puerto donde trabaja
 
 const createContext = ({req, res}: trpcExpress.CreateExpressContextOptions) => ({  // Se crea un contexto para que la información de req/res
@@ -25,6 +24,8 @@ const createContext = ({req, res}: trpcExpress.CreateExpressContextOptions) => (
 export type ExpressContext = inferAsyncReturnType<typeof createContext>
 
 export type WebhookRequest = IncomingMessage & {rawBody: Buffer}      // Tipo para solicitud weebhook
+
+
 
 const start = async () => {                                           // Función start que inicia la aplicación
   
@@ -43,7 +44,20 @@ const start = async () => {                                           // Funció
         cms.logger.info(`Admin URL ${cms.getAdminURL()}`)
       },
     },
-  })
+  });
+
+  if (process.env.NEXT_BUILD) {                                   // Condicional para la construcción de Next.js en producción:  
+    app.listen(PORT, async () => {                                // Escuchar en el puerto especificado
+      payload.logger.info(
+        'Next.js is building for production'
+      )
+      // @ts-expect-error
+      await nextBuild(path.join(__dirname, '../'))                // Ejecutar la construcción de Next.js
+      process.exit()                                              // Salir del proceso después de la construcción
+    })
+
+    return
+  }
 
   const cartRouter = express.Router();                            // Creación de un enrutador para el carrito
 
@@ -59,21 +73,6 @@ const start = async () => {                                           // Funció
 
   app.use("/cart", cartRouter); // Montaje del enrutador del carrito en la aplicación principal(app) -> todas las rutas definidas en cartRouter estarán precedidas por "/cart".
 
-
-
-  if (process.env.NEXT_BUILD) {                                   // Condicional para la construcción de Next.js en producción:  
-    app.listen(PORT, async () => {                                // Escuchar en el puerto especificado
-      payload.logger.info(
-        'Next.js is building for production'
-      )
-      // @ts-expect-error
-      await nextBuild(path.join(__dirname, '../'))                // Ejecutar la construcción de Next.js
-      process.exit()                                              // Salir del proceso después de la construcción
-    })
-
-    return
-  }
-  
   
   app.use('/api/trpc', trpcExpress.createExpressMiddleware({  // El server usará el middleware en la ruta /api/trpc y para ello se configura un
     router: appRouter,                                        // appRouter que es el router de trpc y sus procedimientos

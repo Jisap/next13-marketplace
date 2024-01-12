@@ -64,3 +64,4 @@ export const getPayloadClient = async ({ initOptions }: Args = {}):Promise<Paylo
 
   return cached.client;                                     // Finalmente, devuelve el cliente de Payload que ha sido almacenado en caché.
 }
+

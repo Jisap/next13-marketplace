@@ -106,27 +106,27 @@ var start = function () { return __awaiter(void 0, void 0, void 0, function () {
             case 1:
                 payload = _a.sent();
                 cartRouter = express_1.default.Router();
-                cartRouter.use(payload.authenticate);
+                cartRouter.use(payload.authenticate); // middleware de autenticación del usuario logueado
                 cartRouter.get("/", function (req, res) {
                     var request = req;
                     if (!request.user)
-                        return res.redirect('sign-in?origin=cart');
-                    var parsedUrl = (0, url_1.parse)(req.url, true);
-                    return next_utils_1.nextApp.render(req, res, "/cart", parsedUrl.query);
+                        return res.redirect('sign-in?origin=cart'); // Si el usuario no está autenticado, redirecciona a la página de inicio de sesión con un parámetro de origen (origin=cart).
+                    var parsedUrl = (0, url_1.parse)(req.url, true); // Analiza la URL y extraer los parámetros de la consulta 
+                    return next_utils_1.nextApp.render(req, res, "/cart", parsedUrl.query); // Renderizar la página del carrito usando Next.js 
                 });
-                app.use("/cart", cartRouter);
-                if (process.env.NEXT_BUILD) {
+                app.use("/cart", cartRouter); // Montaje del enrutador del carrito en la aplicación principal(app) -> todas las rutas definidas en cartRouter estarán precedidas por "/cart".
+                if (process.env.NEXT_BUILD) { // Condicional para la construcción de Next.js en producción:  
                     app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
                                     payload.logger.info('Next.js is building for production');
                                     // @ts-expect-error
-                                    return [4 /*yield*/, (0, build_1.default)(path_1.default.join(__dirname, '../'))];
+                                    return [4 /*yield*/, (0, build_1.default)(path_1.default.join(__dirname, '../'))]; // Ejecutar la construcción de Next.js
                                 case 1:
                                     // @ts-expect-error
-                                    _a.sent();
-                                    process.exit();
+                                    _a.sent(); // Ejecutar la construcción de Next.js
+                                    process.exit(); // Salir del proceso después de la construcción
                                     return [2 /*return*/];
                             }
                         });

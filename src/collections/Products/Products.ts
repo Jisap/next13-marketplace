@@ -1,8 +1,8 @@
 
+import { AfterChangeHook, BeforeChangeHook } from "payload/dist/collections/config/types";
 import { PRODUCT_CATEGORIES } from "../../config";
 import { Access, CollectionConfig } from "payload/types";
 import { Product, User } from "@/payload-types";
-import { AfterChangeHook, BeforeChangeHook } from "payload/dist/collections/config/types";
 import { stripe } from "../../lib/stripe";
 
 const addUser: BeforeChangeHook<Product> = async ({ req, data }) => {
@@ -85,6 +85,7 @@ export const Products: CollectionConfig = {
     delete: isAdminOrHasAccess(),
   },
   hooks: {
+    afterChange: [syncUser],                                    // Despues de realizar un cambio en la colección sincronizamos la colección con la bd
     beforeChange: [                                             // Antes de realizar un cambio en la colección
       addUser,                                                  // añadimos el usuario que creo/actualizó un pto al objeto de datos
       async (args) => {                                         // y realizamos unas operaciones sobre dicho objeto dependiendo de si es una creación a actualización.
@@ -123,7 +124,7 @@ export const Products: CollectionConfig = {
         }
       }
     ],
-    afterChange: [syncUser],                                                    // Despues de realizar un cambio en la colección sincronizamos la colección con la bd
+    
   },
   fields: [
     {
@@ -240,8 +241,5 @@ export const Products: CollectionConfig = {
         }
       ]
     }
-    
-      
-    
   ]
 }
