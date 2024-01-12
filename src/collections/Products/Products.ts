@@ -1,7 +1,7 @@
 
 import { PRODUCT_CATEGORIES } from "../../config";
-import { CollectionConfig } from "payload/types";
-import { Product } from "@/payload-types";
+import { Access, CollectionConfig } from "payload/types";
+import { Product, User } from "@/payload-types";
 import { AfterChangeHook, BeforeChangeHook } from "payload/dist/collections/config/types";
 import { stripe } from "../../lib/stripe";
 
@@ -44,6 +44,34 @@ const syncUser: AfterChangeHook<Product> = async ({  // Despues de crear el pto 
   }
 }
 
+const isAdminOrHasAccess =                                    // Generador de reglas de acceso que se utiliza para verificar si un usuario tiene acceso a recursos específicos.
+  (): Access =>                                               // La función se define como una función que no toma argumentos pero retorna otra función, la cual retorna un objeto que representa las reglas de accceso
+    ({ req: { user: _user } }) => {                           // Dicha fn toma como arg un req que contiene un user (_user es el valor del arg user)
+      const user = _user as User | undefined                  // Nos aseguramos que _user sea de tipo User
+
+      if (!user) return false                                 // false si no existe el user (no se da acceso)
+      if (user.role === 'admin') return true                  // true si el user es admin   (si se da acceso)
+
+      const userProductIDs = (user.products || []).reduce<    // se transforma el array user.products en un array más simple que contenga solo los ids de los ptos
+        Array<string>
+      >((acc, product) => {
+        if (!product) return acc                              // Si el product es undefined o null se retorna el acumulador sin cambios
+        if (typeof product === 'string') {                    // Si product es una cadena se agrega directamente al array acumulador
+          acc.push(product)
+        } else {
+          acc.push(product.id)                                // Si product es un objeto se agreaga el product.id   
+        }
+
+        return acc
+      }, []); // [] valor inicial del acumulador
+
+      return {
+        id: {
+          in: userProductIDs,                                 // El array final contiene solo los IDs de los productos cuyo acceso estará en función del role del usuario
+        },                                                    // o de si perternecen al usuario que los creo
+      }
+    }
+
 
 export const Products: CollectionConfig = {
 
@@ -52,7 +80,9 @@ export const Products: CollectionConfig = {
     useAsTitle: "name"
   },
   access:{
-    
+    read: isAdminOrHasAccess(),
+    update: isAdminOrHasAccess(),
+    delete: isAdminOrHasAccess(),
   },
   hooks: {
     beforeChange: [                                             // Antes de realizar un cambio en la colección
