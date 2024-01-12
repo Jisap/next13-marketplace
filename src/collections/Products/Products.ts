@@ -10,7 +10,7 @@ const addUser: BeforeChangeHook<Product> = async ({ req, data }) => {
   return { ...data, user: user.id }
 }
 
-const syncUser: AfterChangeHook<Product> = async ({  // Despues de crear el pto
+const syncUser: AfterChangeHook<Product> = async ({  // Despues de crear el pto o modificar la colección sincronizamos el usuario con la bd
   req,  // Solicitud de cambio/creación
   doc,  // producto que a cambiado/creado
 }) => {
@@ -56,7 +56,7 @@ export const Products: CollectionConfig = {
   },
   hooks: {
     beforeChange: [                                             // Antes de realizar un cambio en la colección
-      addUser,                                                  // añadimos el usuario que creo/actulizó un pto al objeto de datos
+      addUser,                                                  // añadimos el usuario que creo/actualizó un pto al objeto de datos
       async (args) => {                                         // y realizamos unas operaciones sobre dicho objeto dependiendo de si es una creación a actualización.
 
         if(args.operation === "create"){                        // Si creamos un nuevo producto
@@ -92,7 +92,8 @@ export const Products: CollectionConfig = {
           return updated
         }
       }
-    ]
+    ],
+    afterChange: [syncUser],                                                    // Despues de realizar un cambio en la colección sincronizamos la colección con la bd
   },
   fields: [
     {
