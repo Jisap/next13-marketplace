@@ -68,7 +68,7 @@ const isAdminOrHasAccess =                                    // Generador de re
       return {
         id: {
           in: userProductIDs,                                 // El array final contiene solo los IDs de los productos cuyo acceso estará en función del role del usuario
-        },                                                    // o de si perternecen al usuario que los creo
+        },                                                    // o de si perternecen al usuario que los creo o compro
       }
     }
 
